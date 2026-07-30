@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kodra — شركة تطوير برمجيات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d12;
+    --surface:#141821;
+    --surface-2:#1b212c;
+    --line:#262c38;
+    --text:#edf0f4;
+    --muted:#8b94a5;
+    --amber:#e8a33d;
+    --amber-dim:#8a642b;
+    --teal:#39d6a0;
+    --radius:14px;
+    --maxw:1180px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Tajawal', sans-serif;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--amber); color:#161005; }
+
+  h1,h2,h3,h4{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    line-height:1.25;
+  }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  img,svg{ display:block; max-width:100%; }
+
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  section{ position:relative; }
+
+  /* ---------- focus visibility ---------- */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  /* ---------- background texture ---------- */
+  .grid-glow{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:
+      radial-gradient(600px 400px at 85% -5%, rgba(232,163,61,.14), transparent 60%),
+      radial-gradient(500px 350px at 5% 15%, rgba(57,214,160,.09), transparent 60%);
+  }
+
+  /* ================= NAV ================= */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(11,13,18,.78);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:1.35rem;
+    letter-spacing:.2px;
+  }
+  .logo .dot{
+    width:10px; height:10px; border-radius:3px;
+    background:var(--amber);
+    box-shadow:0 0 14px 2px rgba(232,163,61,.55);
+    transform:rotate(45deg);
+  }
+  .nav-links{
+    display:flex;
+    gap:34px;
+    font-size:.98rem;
+    color:var(--muted);
+  }
+  .nav-links a{ position:relative; transition:color .2s; padding:6px 0; }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    right:0; bottom:0;
+    width:0%; height:2px;
+    background:var(--amber);
+    transition:width .25s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Tajawal', sans-serif;
+    font-weight:700;
+    font-size:.95rem;
+    padding:12px 22px;
+    border-radius:10px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-primary{
+    background:var(--amber);
+    color:#191204;
+  }
+  .btn-primary:hover{
+    box-shadow:0 8px 22px -6px rgba(232,163,61,.55);
+    transform:translateY(-2px);
+  }
+  .btn-ghost{
+    border-color:var(--line);
+    color:var(--text);
+    background:transparent;
+  }
+  .btn-ghost:hover{
+    border-color:var(--amber-dim);
+    background:rgba(232,163,61,.06);
+  }
+
+  .burger{ display:none; }
+
+  /* ================= HERO ================= */
+  .hero{
+    padding:96px 0 80px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:56px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    color:var(--teal);
+    border:1px solid rgba(57,214,160,.35);
+    background:rgba(57,214,160,.06);
+    padding:7px 14px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  .eyebrow .blink{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--teal);
+    animation:blink 1.6s infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.15} }
+
+  .hero h1{
+    font-size:clamp(2.3rem, 4.2vw, 3.6rem);
+    margin-bottom:22px;
+    letter-spacing:-.5px;
+  }
+  .hero h1 span{ color:var(--amber); }
+
+  .hero p.lead{
+    color:var(--muted);
+    font-size:1.12rem;
+    max-width:520px;
+    margin-bottom:34px;
+  }
+  .hero-actions{ display:flex; gap:14px; margin-bottom:40px; }
+
+  .hero-meta{
+    display:flex;
+    gap:34px;
+    padding-top:26px;
+    border-top:1px solid var(--line);
+  }
+  .hero-meta div{ display:flex; flex-direction:column; gap:2px; }
+  .hero-meta strong{
+    font-family:'Cairo', sans-serif;
+    font-size:1.5rem;
+    color:var(--text);
+  }
+  .hero-meta span{ font-size:.85rem; color:var(--muted); }
+
+  /* ---- terminal signature ---- */
+  .terminal{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 30px 60px -25px rgba(0,0,0,.6);
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 16px;
+    background:var(--surface-2);
+    border-bottom:1px solid var(--line);
+  }
+  .terminal-bar span{
+    width:11px; height:11px; border-radius:50%;
+    background:#3a4150;
+  }
+  .terminal-bar span:nth-child(1){ background:#e8635f; }
+  .terminal-bar span:nth-child(2){ background:#e8b95f; }
+  .terminal-bar span:nth-child(3){ background:#5fe89b; }
+  .terminal-title{
+    margin-inline-start:auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    color:var(--muted);
+    direction:ltr;
+  }
+  .terminal-body{
+    padding:22px 20px 26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.87rem;
+    color:#c7cedb;
+    min-height:290px;
+    direction:ltr;
+    text-align:left;
+  }
+  .terminal-body .line{ margin-bottom:10px; white-space:pre-wrap; word-break:break-word; }
+  .terminal-body .prompt{ color:var(--teal); }
+  .terminal-body .ok{ color:var(--teal); }
+  .terminal-body .muted{ color:#5a6273; }
+  .cursor{
+    display:inline-block;
+    width:7px; height:15px;
+    background:var(--amber);
+    vertical-align:middle;
+    margin-inline-start:4px;
+    animation:blink 1s steps(1) infinite;
+  }
+
+  /* ================= STATS STRIP ================= */
+  .stats{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
+  }
+  .stats .wrap{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    padding:36px 28px;
+  }
+  .stat{
+    text-align:center;
+    border-inline-start:1px solid var(--line);
+  }
+  .stat:first-child{ border-inline-start:none; }
+  .stat strong{
+    display:block;
+    font-family:'Cairo',sans-serif;
+    font-size:2.1rem;
+    color:var(--amber);
+  }
+  .stat span{ color:var(--muted); font-size:.9rem; }
+
+  /* ================= SECTION HEADS ================= */
+  .section-pad{ padding:110px 0; }
+  .head{
+    max-width:640px;
+    margin-bottom:56px;
+  }
+  .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    color:var(--amber);
+    display:block;
+    margin-bottom:14px;
+    letter-spacing:.5px;
+  }
+  .head h2{ font-size:clamp(1.7rem, 3vw, 2.4rem); margin-bottom:14px; }
+  .head p{ color:var(--muted); font-size:1.05rem; }
+
+  /* ================= SERVICES ================= */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+  }
+  .service-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    transition:transform .25s ease, border-color .25s ease, background .25s ease;
+  }
+  .service-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--amber-dim);
+    background:var(--surface-2);
+  }
+  .service-icon{
+    width:46px; height:46px;
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(232,163,61,.1);
+    color:var(--amber);
+    margin-bottom:20px;
+  }
+  .service-card h3{ font-size:1.15rem; margin-bottom:10px; }
+  .service-card p{ color:var(--muted); font-size:.95rem; }
+
+  /* ================= PROCESS ================= */
+  .process{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:0;
+    position:relative;
+  }
+  .process::before{
+    content:'';
+    position:absolute;
+    top:23px; right:10%; left:10%;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent);
+  }
+  .proc-step{
+    position:relative;
+    padding-inline-end:18px;
+    text-align:center;
+  }
+  .proc-num{
+    width:46px; height:46px;
+    margin:0 auto 22px;
+    border-radius:50%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--amber);
+    position:relative;
+    z-index:1;
+  }
+  .proc-step h4{ font-size:1.02rem; margin-bottom:8px; }
+  .proc-step p{ color:var(--muted); font-size:.87rem; padding:0 6px; }
+
+  /* ================= WORK ================= */
+  .work-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:20px;
+  }
+  .work-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:34px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .25s ease;
+  }
+  .work-card:hover{ border-color:var(--teal); }
+  .work-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    color:var(--teal);
+    background:rgba(57,214,160,.08);
+    border:1px solid rgba(57,214,160,.3);
+    padding:5px 12px;
+    border-radius:999px;
+    display:inline-block;
+    margin-bottom:18px;
+  }
+  .work-card h3{ font-size:1.35rem; margin-bottom:10px; }
+  .work-card p{ color:var(--muted); margin-bottom:22px; }
+  .work-metrics{ display:flex; gap:26px; }
+  .work-metrics div strong{ display:block; font-family:'Cairo',sans-serif; color:var(--amber); font-size:1.2rem; }
+  .work-metrics div span{ color:var(--muted); font-size:.82rem; }
+
+  /* ================= STACK MARQUEE ================= */
+  .stack{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:34px 0;
+    overflow:hidden;
+    background:var(--surface);
+  }
+  .marquee{
+    display:flex;
+    width:max-content;
+    gap:60px;
+    animation:scroll 26s linear infinite;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:1.1rem;
+    color:var(--muted);
+  }
+  .marquee span{ white-space:nowrap; }
+  .marquee span b{ color:var(--text); font-weight:600; }
+  @keyframes scroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+
+  /* ================= TESTIMONIALS ================= */
+  .test-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+  }
+  .test-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px;
+  }
+  .test-card p{ color:#cbd2df; margin-bottom:22px; font-size:.98rem; }
+  .test-who{ display:flex; align-items:center; gap:12px; }
+  .avatar{
+    width:40px; height:40px; border-radius:50%;
+    background:linear-gradient(135deg, var(--amber), var(--teal));
+    flex:none;
+  }
+  .test-who strong{ display:block; font-size:.92rem; }
+  .test-who span{ display:block; color:var(--muted); font-size:.8rem; }
+
+  /* ================= CTA ================= */
+  .cta{
+    background:linear-gradient(135deg, var(--surface), var(--surface-2));
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:70px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .cta::before{
+    content:'';
+    position:absolute;
+    width:400px; height:400px;
+    background:radial-gradient(circle, rgba(232,163,61,.18), transparent 70%);
+    top:-150px; right:-100px;
+  }
+  .cta h2{ font-size:clamp(1.6rem,3vw,2.3rem); margin-bottom:16px; position:relative; }
+  .cta p{ color:var(--muted); margin-bottom:34px; position:relative; }
+  .cta-actions{ display:flex; gap:14px; justify-content:center; position:relative; }
+
+  /* ================= FOOTER ================= */
+  footer{ border-top:1px solid var(--line); padding:56px 0 30px; }
+  .foot-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:40px;
+    margin-bottom:46px;
+  }
+  .foot-brand p{ color:var(--muted); font-size:.92rem; margin-top:14px; max-width:280px; }
+  .foot-col h5{
+    font-family:'Cairo',sans-serif;
+    font-size:.95rem;
+    margin-bottom:16px;
+    color:var(--text);
+  }
+  .foot-col a{
+    display:block;
+    color:var(--muted);
+    font-size:.9rem;
+    margin-bottom:10px;
+    transition:color .2s;
+  }
+  .foot-col a:hover{ color:var(--amber); }
+  .foot-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:26px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:.85rem;
+    direction:ltr;
+  }
+  .foot-bottom .wrap-inner{ direction:rtl; }
+
+  /* ================= REVEAL ================= */
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; }
+  }
+
+  /* ================= RESPONSIVE ================= */
+  @media (max-width:980px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .services-grid{ grid-template-columns:repeat(2,1fr); }
+    .work-grid{ grid-template-columns:1fr; }
+    .process{ grid-template-columns:repeat(3,1fr); row-gap:36px; }
+    .process::before{ display:none; }
+    .test-grid{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+    .stats .wrap{ grid-template-columns:repeat(2,1fr); row-gap:24px; }
+  }
+  @media (max-width:720px){
+    .nav-links{ display:none; }
+    .burger{
+      display:flex; align-items:center; justify-content:center;
+      width:40px; height:40px; border:1px solid var(--line); border-radius:8px;
+      cursor:pointer; background:transparent;
+    }
+    .services-grid{ grid-template-columns:1fr; }
+    .process{ grid-template-columns:1fr 1fr; }
+    .cta{ padding:50px 26px; }
+    .foot-grid{ grid-template-columns:1fr; gap:30px; }
+    .foot-bottom{ flex-direction:column; gap:10px; text-align:center; }
+    .hero{ padding:56px 0 60px; }
+    .section-pad{ padding:70px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-glow"></div>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="dot"></span> Kodra</div>
+    <div class="nav-links">
+      <a href="#home">الرئيسية</a>
+      <a href="#services">خدماتنا</a>
+      <a href="#process">منهجيتنا</a>
+      <a href="#work">أعمالنا</a>
+      <a href="#contact">تواصل معنا</a>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <a href="#contact" class="btn btn-primary">احجز استشارة مجانية</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="home">
+    <div class="wrap hero-grid">
+      <div class="reveal">
+        <span class="eyebrow"><span class="blink"></span> نبني، نختبر، نُطلق</span>
+        <h1>نحوّل أفكارك إلى <span>برمجيات</span> تعمل فعلاً في السوق</h1>
+        <p class="lead">Kodra شركة متخصصة في تطوير المنتجات الرقمية للشركات الناشئة والمؤسسات — من الفكرة الأولى إلى منتج جاهز للنمو، بفريق هندسي واحد يملك المسؤولية من أول سطر كود.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">ابدأ مشروعك الآن</a>
+          <a href="#work" class="btn btn-ghost">شاهد أعمالنا</a>
+        </div>
+        <div class="hero-meta">
+          <div><strong>+70</strong><span>مشروع مُسلَّم</span></div>
+          <div><strong>9</strong><span>سنوات خبرة</span></div>
+          <div><strong>18</strong><span>مهندس ومصمم</span></div>
+          <div><strong>98%</strong><span>عملاء راضون</span></div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span>
+            <div class="terminal-title">kodra — build.sh</div>
+          </div>
+          <div class="terminal-body" id="termBody"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="stat"><strong>4</strong><span>أسابيع لأول نسخة تجريبية</span></div>
+      <div class="stat"><strong>24/7</strong><span>مراقبة الأنظمة بعد الإطلاق</span></div>
+      <div class="stat"><strong>12</strong><span>قطاعًا عملنا بها</span></div>
+      <div class="stat"><strong>SLA</strong><span>اتفاقية مستوى خدمة واضحة</span></div>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section class="section-pad" id="services">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">// خدماتنا</span>
+        <h2>كل ما يحتاجه منتجك الرقمي، تحت سقف واحد</h2>
+        <p>فريق هندسي متكامل يغطي دورة حياة المنتج بالكامل، بدل التعامل مع أطراف متفرقة لكل جزء.</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 4L2 12l6 8M16 4l6 8-6 8"/></svg>
+          </div>
+          <h3>تطوير الويب</h3>
+          <p>مواقع وتطبيقات ويب سريعة وقابلة للتوسّع، مبنية بأحدث الأطر البرمجية مع اهتمام حقيقي بتجربة الاستخدام.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+          </div>
+          <h3>تطبيقات الموبايل</h3>
+          <p>تطبيقات iOS و Android أصلية أو Cross-platform، مصممة للأداء العالي والاستقرار على نطاق واسع من الأجهزة.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          </div>
+          <h3>البنية السحابية</h3>
+          <p>تصميم وإدارة بنية تحتية سحابية آمنة وقابلة للتوسّع الأفقي، مع أتمتة كاملة للنشر والمراقبة.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8L7 17M17 7l2.8-2.8"/></svg>
+          </div>
+          <h3>الذكاء الاصطناعي</h3>
+          <p>دمج نماذج الذكاء الاصطناعي داخل منتجك — من الأتمتة الذكية إلى المساعدين الافتراضيين المبنية على بياناتك.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+          </div>
+          <h3>تصميم UX/UI</h3>
+          <p>تصميم واجهات واضحة تخدم هدف المستخدم أولًا، مبنية على أبحاث استخدام حقيقية وليس تخمينًا.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+          </div>
+          <h3>الصيانة والدعم</h3>
+          <p>متابعة مستمرة بعد الإطلاق: تحديثات أمنية، تحسين أداء، ودعم فني بوقت استجابة محدد وواضح.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section class="section-pad" id="process" style="background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">// منهجية العمل</span>
+        <h2>خمس مراحل من أول فكرة إلى منتج حي</h2>
+        <p>عملية واضحة ومتفق عليها من اليوم الأول، بلا مفاجآت في الجدول الزمني أو النطاق.</p>
+      </div>
+      <div class="process">
+        <div class="proc-step reveal">
+          <div class="proc-num">01</div>
+          <h4>الاكتشاف</h4>
+          <p>نفهم السوق والمستخدم والهدف التجاري قبل كتابة سطر كود واحد.</p>
+        </div>
+        <div class="proc-step reveal">
+          <div class="proc-num">02</div>
+          <h4>التصميم</h4>
+          <p>نماذج أولية قابلة للاختبار، ومراجعة مع المستخدمين الحقيقيين.</p>
+        </div>
+        <div class="proc-step reveal">
+          <div class="proc-num">03</div>
+          <h4>البناء</h4>
+          <p>تطوير في دورات أسبوعية قصيرة، مع عرض تقدّم مستمر وشفاف.</p>
+        </div>
+        <div class="proc-step reveal">
+          <div class="proc-num">04</div>
+          <h4>الإطلاق</h4>
+          <p>نشر متدرّج ومراقب، مع خطة رجوع فورية عند أي طارئ.</p>
+        </div>
+        <div class="proc-step reveal">
+          <div class="proc-num">05</div>
+          <h4>النمو</h4>
+          <p>قياس الأداء الفعلي وتطوير مستمر بناءً على بيانات الاستخدام.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WORK ================= -->
+  <section class="section-pad" id="work">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">// أعمالنا</span>
+        <h2>مشاريع حققت نتائج قابلة للقياس</h2>
+        <p>عيّنة من المنتجات التي بنيناها وما زالت تعمل في الإنتاج اليوم.</p>
+      </div>
+      <div class="work-grid">
+
+        <div class="work-card reveal">
+          <span class="work-tag">منصة تجارة إلكترونية</span>
+          <h3>سوق — منصة بيع بالجملة B2B</h3>
+          <p>نظام طلبات وفوترة ومخزون لتجّار الجملة، يخدم أكثر من 400 متجر يوميًا.</p>
+          <div class="work-metrics">
+            <div><strong>+40%</strong><span>سرعة تنفيذ الطلبات</span></div>
+            <div><strong>400+</strong><span>متجر نشط</span></div>
+          </div>
+        </div>
+
+        <div class="work-card reveal">
+          <span class="work-tag">تطبيق موبايل</span>
+          <h3>خُطى — تطبيق لياقة بالذكاء الاصطناعي</h3>
+          <p>خطط تمرين مخصصة تتكيّف أسبوعيًا بناءً على أداء المستخدم الفعلي.</p>
+          <div class="work-metrics">
+            <div><strong>120K</strong><span>مستخدم نشط</span></div>
+            <div><strong>4.8</strong><span>تقييم المتجر</span></div>
+          </div>
+        </div>
+
+        <div class="work-card reveal">
+          <span class="work-tag">نظام داخلي</span>
+          <h3>مسار — لوحة تشغيل لوجستي</h3>
+          <p>تتبع شحنات لحظي وتحسين مسارات التوصيل لشركة نقل إقليمية.</p>
+          <div class="work-metrics">
+            <div><strong>-28%</strong><span>تكلفة تشغيل</span></div>
+            <div><strong>15</strong><span>مدينة مغطاة</span></div>
+          </div>
+        </div>
+
+        <div class="work-card reveal">
+          <span class="work-tag">منتج SaaS</span>
+          <h3>دفتر — نظام محاسبة للمشاريع الصغيرة</h3>
+          <p>فوترة وضرائب وتقارير مالية مبسّطة لأصحاب المشاريع الصغيرة.</p>
+          <div class="work-metrics">
+            <div><strong>+3K</strong><span>حساب مفعّل</span></div>
+            <div><strong>99.95%</strong><span>وقت تشغيل</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STACK MARQUEE ================= -->
+  <section class="stack">
+    <div class="marquee" id="marquee">
+      <span><b>React</b></span>
+      <span><b>Node.js</b></span>
+      <span><b>TypeScript</b></span>
+      <span><b>Python</b></span>
+      <span><b>PostgreSQL</b></span>
+      <span><b>AWS</b></span>
+      <span><b>Docker</b></span>
+      <span><b>Kubernetes</b></span>
+      <span><b>Next.js</b></span>
+      <span><b>Flutter</b></span>
+      <span><b>GraphQL</b></span>
+      <span><b>Redis</b></span>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="section-pad">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="kicker">// آراء العملاء</span>
+        <h2>ما يقوله من عملنا معهم</h2>
+      </div>
+      <div class="test-grid">
+        <div class="test-card reveal">
+          <p>"فريق Kodra مش بس نفّذ اللي طلبناه، كانوا بيسألوا ليه، وده وفّر علينا وقت كبير في المدى الطويل."</p>
+          <div class="test-who">
+            <div class="avatar"></div>
+            <div><strong>سارة العزب</strong><span>مديرة منتج، سوق</span></div>
+          </div>
+        </div>
+        <div class="test-card reveal">
+          <p>"أول شركة تعاملنا معاها بتلتزم بالمواعيد فعلاً. كل أسبوع كان فيه تحديث حقيقي نقدر نلمسه."</p>
+          <div class="test-who">
+            <div class="avatar"></div>
+            <div><strong>يوسف مراد</strong><span>مؤسس، خُطى</span></div>
+          </div>
+        </div>
+        <div class="test-card reveal">
+          <p>"جودة الكود وسهولة التوسّع بعد الإطلاق فرقت معانا جدًا لما زاد عدد المستخدمين فجأة."</p>
+          <div class="test-who">
+            <div class="avatar"></div>
+            <div><strong>نور حجازي</strong><span>مدير تقني، مسار</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="section-pad" id="contact">
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2>عندك فكرة منتج؟ خلّينا نبنيها مع بعض</h2>
+        <p>استشارة أولى مجانية لمدة 30 دقيقة، بنطلعلك فيها بتصوّر واضح للنطاق والتكلفة والجدول الزمني.</p>
+        <div class="cta-actions">
+          <a href="mailto:hello@kodra.dev" class="btn btn-primary">راسلنا الآن</a>
+          <a href="#" class="btn btn-ghost">تصفح دراسات الحالة</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><span class="dot"></span> Kodra</div>
+        <p>شركة تطوير برمجيات تبني منتجات رقمية تدوم، من الفكرة إلى الإنتاج.</p>
+      </div>
+      <div class="foot-col">
+        <h5>الشركة</h5>
+        <a href="#services">خدماتنا</a>
+        <a href="#process">منهجيتنا</a>
+        <a href="#work">أعمالنا</a>
+      </div>
+      <div class="foot-col">
+        <h5>خدماتنا</h5>
+        <a href="#services">تطوير الويب</a>
+        <a href="#services">تطبيقات الموبايل</a>
+        <a href="#services">الذكاء الاصطناعي</a>
+      </div>
+      <div class="foot-col">
+        <h5>تواصل</h5>
+        <a href="mailto:hello@kodra.dev">hello@kodra.dev</a>
+        <a href="tel:+201000000000">01000000000+</a>
+        <a href="#">القاهرة، مصر</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="wrap-inner">© 2026 Kodra. جميع الحقوق محفوظة.</div>
+      <div class="mono" style="direction:ltr;">built with code, not templates</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- terminal typing effect ----------
+  const termBody = document.getElementById('termBody');
+  const commands = [
+    { type:'cmd', text:'kodra init product --client="you"' },
+    { type:'out', text:'✓ Scaffolding project structure...' },
+    { type:'cmd', text:'kodra design --research-driven' },
+    { type:'out', text:'✓ Wireframes ready for review' },
+    { type:'cmd', text:'kodra build --sprint=1..6' },
+    { type:'out', text:'✓ 6 sprints shipped, 0 blockers' },
+    { type:'cmd', text:'kodra deploy --env=production' },
+    { type:'out', text:'✓ Live at status: healthy' },
+    { type:'cmd', text:'echo $PRODUCT_STATUS' },
+    { type:'out', text:'shipped. scaling. yours.' },
+  ];
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function typeTerminal(){
+    let i = 0;
+    termBody.innerHTML = '';
+
+    if(prefersReduced){
+      commands.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'line';
+        if(c.type === 'cmd'){
+          div.innerHTML = '<span class="prompt">$</span> ' + c.text;
+        } else {
+          div.innerHTML = '<span class="ok">' + c.text + '</span>';
+        }
+        termBody.appendChild(div);
+      });
+      return;
+    }
+
+    function nextLine(){
+      if(i >= commands.length){
+        setTimeout(typeTerminal, 2200);
+        return;
+      }
+      const c = commands[i];
+      const div = document.createElement('div');
+      div.className = 'line';
+      termBody.appendChild(div);
+
+      if(c.type === 'cmd'){
+        let txt = '';
+        let j = 0;
+        const prefix = '<span class="prompt">$</span> ';
+        function typeChar(){
+          if(j <= c.text.length){
+            txt = c.text.slice(0, j);
+            div.innerHTML = prefix + txt + '<span class="cursor"></span>';
+            j++;
+            setTimeout(typeChar, 22);
+          } else {
+            div.innerHTML = prefix + c.text;
+            i++;
+            setTimeout(nextLine, 260);
+          }
+        }
+        typeChar();
+      } else {
+        div.innerHTML = '<span class="ok">' + c.text + '</span>';
+        i++;
+        setTimeout(nextLine, 420);
+      }
+
+      termBody.scrollTop = termBody.scrollHeight;
+    }
+
+    nextLine();
+  }
+
+  typeTerminal();
+
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !prefersReduced){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
+
+  const marquee = document.getElementById('marquee');
+  marquee.innerHTML += marquee.innerHTML;
+</script>
+
+</body>
+</html>
